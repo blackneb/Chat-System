@@ -1,15 +1,24 @@
-import { useState } from 'react'
-import LoginPage from './auth/Signin'
-import './App.css'
+import React, { useState } from 'react';
+import LoginPage from './auth/Signin';
+import Chat from './chat/Chat';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+  };
 
   return (
-    <>
-      <LoginPage/>
-    </>
-  )
+    <div className="App">
+      {isLoggedIn ? (
+        <Chat />
+      ) : (
+        <LoginPage onLoginSuccess={handleLoginSuccess} />
+      )}
+    </div>
+  );
 }
 
-export default App
+export default App;
