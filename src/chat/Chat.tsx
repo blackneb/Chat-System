@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Descriptions } from 'antd';
 import axios from 'axios'; // Import axios
+import ChatApp from './ChatApp';
 
 const Chat: React.FC = () => {
   interface UserProfile {
@@ -70,6 +71,7 @@ const Chat: React.FC = () => {
       ) : (
         <p>No profile found</p>
       )}
+      <ChatApp/>
     </div>
   );
 };
