@@ -74,7 +74,9 @@ const ChatApp: React.FC = () => {
         console.log("received")
         console.log('WebSocket message received:', event.data);
         const receivedMessage: Message = JSON.parse(event.data);
-        setMessages(prevMessages => [...prevMessages, receivedMessage]);
+        if (receivedMessage.messageBody !== "Connection established") {
+          setMessages(prevMessages => [...prevMessages, receivedMessage]);
+        }
         socket.current = ws;
       });
       ws.addEventListener('close', () => {
@@ -118,7 +120,7 @@ const ChatApp: React.FC = () => {
 
   return (
     <Layout>
-      <Header>Chat App</Header>
+      <Header className='text-white'>Chat App</Header>
       <Layout>
         <Sider width={200} style={{ background: '#fff' }}>
           <Menu
@@ -152,13 +154,39 @@ const ChatApp: React.FC = () => {
                 <List
                   dataSource={messages}
                   renderItem={(item) => (
-                    <List.Item style={{ textAlign: item.sender === chatUserProfile?.username ? 'right' : 'left' }}>
-                      <div>
-                        <Tag style={{ borderRadius: '50%', padding: '5px', marginRight: '5px' }}>{item.sender}</Tag>
-                        <Tag>{item.messageBody}</Tag>
-                        <Text type="secondary" style={{ fontSize: 'small' }}>{new Date(item.sendAt).toLocaleTimeString()}</Text>
-                      </div>
-                    </List.Item>
+                    // Check if messageBody is not "Connection established"
+                    item.messageBody !== "Connection established" && (
+                      <List.Item className='w-full'>
+                      {
+                        item.sender === chatUserProfile.username ? (
+                        <>
+                          <div className='flex justify-start w-full'>
+                            {item.sender && (
+                              <Tag color="blue" className="rounded-full px-2 py-1 mr-2 uppercase">
+                                {item.sender.charAt(0).toUpperCase()}
+                              </Tag>
+                            )}
+                            <Tag>{item.messageBody}</Tag>
+                            <Text type="secondary" style={{ fontSize: 'small' }}>{new Date(item.sendAt).toLocaleTimeString()}</Text>
+                          </div>
+                        </>
+                        ):(
+                        <>
+                          <div className='flex justify-end w-full'>
+                            <Text type="secondary" style={{ fontSize: 'small', paddingRight:"4px" }}>{new Date(item.sendAt).toLocaleTimeString()}</Text>
+                            <Tag>{item.messageBody}</Tag>
+                            {item.sender && (
+                              <Tag color="blue" className="rounded-full px-2 py-1 mr-2 uppercase">
+                                {item.sender.charAt(0).toUpperCase()}
+                              </Tag>
+                            )}
+                          </div>
+                        </>
+                        )
+                      }
+                        
+                      </List.Item>
+                    )
                   )}
                 />
                 <div ref={messagesEndRef} />
