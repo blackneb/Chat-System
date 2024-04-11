@@ -18,6 +18,15 @@ const Chat: React.FC = () => {
 
   useEffect(() => {
     const fetchProfile = async () => {
+      // Check if userProfile is cached
+      const cachedUserProfile = localStorage.getItem('chatuserprofile');
+      if (cachedUserProfile) {
+        const parsedUserProfile: UserProfile = JSON.parse(cachedUserProfile);
+        setUserProfile(parsedUserProfile);
+        setLoading(false);
+        return;
+      }
+
       const accessToken = getCookie('access_token');
 
       if (!accessToken) {
@@ -36,6 +45,11 @@ const Chat: React.FC = () => {
 
         if (response.status === 200) {
           setUserProfile(response.data);
+          // Save userProfile to cache with 1 hour expiry
+          localStorage.setItem('chatuserprofile', JSON.stringify(response.data));
+          setTimeout(() => {
+            localStorage.removeItem('chatuserprofile');
+          }, 3600000); // 1 hour in milliseconds
         } else {
           console.error('Error fetching profile:', response.statusText);
         }
@@ -60,18 +74,20 @@ const Chat: React.FC = () => {
       {loading ? (
         <p>Loading...</p>
       ) : userProfile ? (
-        <Descriptions title="User Profile">
-          <Descriptions.Item label="Username">{userProfile.username}</Descriptions.Item>
-          <Descriptions.Item label="Email">{userProfile.email}</Descriptions.Item>
-          <Descriptions.Item label="Location">{userProfile.location}</Descriptions.Item>
-          <Descriptions.Item label="Phone Number">{userProfile.phone_number}</Descriptions.Item>
-          <Descriptions.Item label="User Type">{userProfile.user_type}</Descriptions.Item>
-          {/* Add more fields as needed */}
-        </Descriptions>
+        <div>
+          <Descriptions title="User Profile">
+            <Descriptions.Item label="Username">{userProfile.username}</Descriptions.Item>
+            <Descriptions.Item label="Email">{userProfile.email}</Descriptions.Item>
+            <Descriptions.Item label="Location">{userProfile.location}</Descriptions.Item>
+            <Descriptions.Item label="Phone Number">{userProfile.phone_number}</Descriptions.Item>
+            <Descriptions.Item label="User Type">{userProfile.user_type}</Descriptions.Item>
+            {/* Add more fields as needed */}
+          </Descriptions>
+          <ChatApp />
+        </div>
       ) : (
         <p>No profile found</p>
       )}
-      <ChatApp/>
     </div>
   );
 };
