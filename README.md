@@ -1,2 +1,2 @@
-
-# react
+# React + Typescript + vite
+## Chat System Frontend
