@@ -131,7 +131,7 @@ const ChatApp: React.FC = () => {
             {loading ? (
               <Menu.Item key="loading">Loading...</Menu.Item>
             ) : (
-              users.map((user, index) => (
+              users.map((user) => (
                 <Menu.Item key={user.id} onClick={() => setSelectedUser(user)}>
                   {user.username}
                 </Menu.Item>
